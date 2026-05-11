@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRISM | Customer Profile</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="light-theme">
+    <div class="prism-app">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="PRISM Logo" class="logo-img">
+                <h1>PRISM</h1>
+            </div>
+            <nav class="side-nav">
+                <a href="/" class="nav-btn">
+                    <i data-lucide="arrow-left"></i> Back to Dashboard
+                </a>
+            </nav>
+            <div class="theme-switch-container">
+                <span>Dark Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="title-group">
+                    <h2>Customer Deep Dive: <span class="customer-id">{{ customer_id }}</span></h2>
+                </div>
+            </header>
+
+            <div class="profile-grid">
+                <!-- Persona Card -->
+                <div class="kpi-card glass">
+                    <div class="kpi-header">
+                        <i data-lucide="user-check" class="icon-users"></i>
+                        <span>Persona</span>
+                    </div>
+                    <div class="value" id="profile-persona">{{ persona }}</div>
+                </div>
+
+                <!-- Churn Risk Card -->
+                <div class="kpi-card glass">
+                    <div class="kpi-header">
+                        <i data-lucide="user-x" class="icon-at-risk"></i>
+                        <span>Churn Risk</span>
+                    </div>
+                    <div class="value" id="profile-churn-risk">{{ churn_risk }}</div>
+                    <div class="sub-value">({{ churn_probability }}% Probability)</div>
+                </div>
+
+                <!-- Predicted LTV Card -->
+                <div class="kpi-card glass">
+                    <div class="kpi-header">
+                        <i data-lucide="trending-up" class="icon-monetary"></i>
+                        <span>Predicted LTV (12-mo)</span>
+                    </div>
+                    <div class="value" id="profile-ltv">₹{{ predicted_ltv }}</div>
+                </div>
+            </div>
+
+            <div class="card glass table-container">
+                <h3>Transaction History</h3>
+                <table class="prism-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice No</th>
+                            <th>Invoice Date</th>
+                            <th>Stock Code</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                        <tr>
+                            <td>{{ tx.InvoiceNo }}</td>
+                            <td>{{ tx.InvoiceDate }}</td>
+                            <td>{{ tx.StockCode }}</td>
+                            <td>{{ tx.Description }}</td>
+                            <td>{{ tx.Quantity }}</td>
+                            <td>₹{{ "%.2f"|format(tx.UnitPrice) }}</td>
+                            <td>₹{{ "%.2f"|format(tx.TotalPrice) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        // Simple theme toggle for this page
+        const themeToggle = document.getElementById('theme-toggle');
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.className = 'dark-theme';
+            themeToggle.checked = true;
+        }
+        themeToggle.addEventListener('change', (e) => {
+            const theme = e.target.checked ? 'dark' : 'light';
+            document.body.className = theme + '-theme';
+            localStorage.setItem('theme', theme);
+        });
+    </script>
+</body>
+</html>

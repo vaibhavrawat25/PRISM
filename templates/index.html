@@ -25,7 +25,7 @@
                     <i data-lucide="bar-chart-3"></i> Segment Analysis
                 </button>
                 <button class="nav-btn" id="nav-tools" onclick="openTab(event, 'tools')">
-                    <i data-lucide="zap"></i> Insight Tools
+                    <i data-lucide="zap"></i> Prediction Tools
                 </button>
             </nav>
             <div class="theme-switch-container">
@@ -43,12 +43,16 @@
                 <div class="hero-content glass">
                     <img src="{{ url_for('static', filename='logo.png') }}" alt="PRISM" class="hero-logo">
                     <h2>Welcome to PRISM</h2>
-                    <p>The elite customer intelligence engine. Upload your transaction data to unlock behavior personas and revenue insights.</p>
+                    <p>Upload transaction data to generate RFM segments, customer personas, and retention signals.</p>
                     <div class="hero-actions">
                         <button class="btn-primary large" onclick="document.getElementById('csv-upload').click()">
                             <i data-lucide="upload-cloud"></i> Upload CSV to Begin
                         </button>
+                        <a class="btn-secondary" href="/sample_csv">
+                            <i data-lucide="file-down"></i> Sample CSV
+                        </a>
                     </div>
+                    <div class="upload-status status-msg" hidden></div>
                 </div>
             </div>
 
@@ -59,8 +63,11 @@
                         <h2 id="view-title">Dashboard Overview</h2>
                     </div>
                     <div class="actions">
-                        <a href="/export" class="btn-primary export-btn">
-                            <i data-lucide="download"></i> Export Analysis
+                        <button class="btn-primary" onclick="document.getElementById('csv-upload').click()">
+                            <i data-lucide="upload-cloud"></i> Upload CSV
+                        </button>
+                        <a class="btn-secondary" href="/sample_csv">
+                            <i data-lucide="file-down"></i> Sample CSV
                         </a>
                     </div>
                 </header>
@@ -68,6 +75,13 @@
                 <!-- Overview Tab -->
                 <div id="dashboard" class="tab-content active">
                     <div class="kpi-grid">
+                        <div class="kpi-card glass">
+                            <div class="kpi-header">
+                                <i data-lucide="users" class="icon-users"></i>
+                                <span>Total Customers</span>
+                            </div>
+                            <div class="value" id="stat-total">-</div>
+                        </div>
                         <div class="kpi-card glass">
                             <div class="kpi-header">
                                 <i data-lucide="clock" class="icon-recency"></i>
@@ -89,24 +103,17 @@
                             </div>
                             <div class="value" id="stat-monetary">-</div>
                         </div>
-                        <div class="kpi-card glass">
-                            <div class="kpi-header">
-                                <i data-lucide="users" class="icon-users"></i>
-                                <span>Total Customers</span>
-                            </div>
-                            <div class="value" id="stat-total">-</div>
-                        </div>
                     </div>
 
                     <div class="viz-container">
                         <div class="card chart-large glass">
-                            <h3>High-Dimensional RFM Geometry</h3>
+                            <h3>RFM Customer Segments</h3>
                             <div id="chart-3d" class="chart-box"></div>
                         </div>
                     </div>
 
                     <div class="prism-insights">
-                        <h2>The persona Engine</h2>
+                        <h2>The Persona Engine</h2>
                         <div class="insight-grid">
                             <div class="insight-card cluster-champions">
                                 <div class="insight-header">
@@ -114,31 +121,31 @@
                                     <span class="badge">Core Revenue</span>
                                 </div>
                                 <p class="pattern">Low R, High F, High M</p>
-                                <p class="strategy">Your elite drivers. Priority rewards and early access to retention.</p>
+                                <p class="strategy">Your most valuable customers. Reward them and leverage for testimonials.</p>
                             </div>
-                            <div class="insight-card cluster-spenders">
+                            <div class="insight-card cluster-loyalists">
                                 <div class="insight-header">
-                                    <h3>Big Spenders</h3>
-                                    <span class="badge">Premium</span>
+                                    <h3>Potential Loyalists</h3>
+                                    <span class="badge">High Potential</span>
                                 </div>
-                                <p class="pattern">High M, Low F</p>
-                                <p class="strategy">High-value, low-frequency buyers. Target with luxury cross-sells.</p>
+                                <p class="pattern">Mid R, Mid F, Mid M</p>
+                                <p class="strategy">Engaged customers. Nurture with loyalty programs and personalized offers.</p>
                             </div>
-                            <div class="insight-card cluster-loafers">
+                            <div class="insight-card cluster-at-risk">
                                 <div class="insight-header">
-                                    <h3>Potential Loafers</h3>
-                                    <span class="badge">Engagement Target</span>
-                                </div>
-                                <p class="pattern">Recent, very Low M</p>
-                                <p class="strategy">Trial users. Use volume discounts to increase ticket size.</p>
-                            </div>
-                            <div class="insight-card cluster-sleep">
-                                <div class="insight-header">
-                                    <h3>About to Sleep</h3>
-                                    <span class="badge">At Risk</span>
+                                    <h3>At-Risk Customers</h3>
+                                    <span class="badge">Needs Attention</span>
                                 </div>
                                 <p class="pattern">High R, Low F, Low M</p>
-                                <p class="strategy">Churn risk. Automated re-engagement codes required.</p>
+                                <p class="strategy">Customers who are slipping away. Re-engage with targeted promotions.</p>
+                            </div>
+                            <div class="insight-card cluster-lost">
+                                <div class="insight-header">
+                                    <h3>Lost Customers</h3>
+                                    <span class="badge">Inactive</span>
+                                </div>
+                                <p class="pattern">Very High R, Very Low F/M</p>
+                                <p class="strategy">Inactive customers. Attempt to win back with special offers or surveys.</p>
                             </div>
                         </div>
                     </div>
@@ -152,8 +159,33 @@
                             <div id="chart-pie" style="height: 400px;"></div>
                         </div>
                         <div class="card glass">
-                            <h3>Revenue Generation by Segment</h3>
+                            <h3>Revenue by Segment</h3>
                             <div id="chart-bar" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                    <div class="card glass data-table-card">
+                        <div class="table-toolbar">
+                            <h3>Customer Segment Table</h3>
+                            <input type="search" id="customer-search" placeholder="Search customer or persona">
+                        </div>
+                        <div class="table-scroll">
+                            <table class="prism-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer ID</th>
+                                        <th>Persona</th>
+                                        <th>Recency</th>
+                                        <th>Frequency</th>
+                                        <th>Monetary</th>
+                                        <th>Profile</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customer-table-body">
+                                    <tr>
+                                        <td colspan="6">No customer data loaded.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -166,40 +198,74 @@
                                 <i data-lucide="upload-cloud"></i>
                                 <h3>Data Source</h3>
                             </div>
-                            <p class="tool-desc">Upload your transaction CSV to prime the PRISM engine.</p>
-                            <div class="upload-area" id="drop-zone">
-                                <i data-lucide="file-up"></i>
-                                <p>Click to upload CSV</p>
-                                <input type="file" id="csv-upload" accept=".csv" hidden>
-                                <button class="btn-secondary" onclick="document.getElementById('csv-upload').click()">Browse</button>
+                            <p class="tool-desc">Upload your transaction CSV to power the segmentation engine.</p>
+                            <div class="csv-format">
+                                <strong>Required columns</strong>
+                                <span>InvoiceNo, InvoiceDate, Quantity, UnitPrice, CustomerID</span>
+                                <small>Optional columns like StockCode, Description, and Country are supported.</small>
                             </div>
-                            <div id="upload-status" class="status-msg"></div>
+                            <div class="upload-area" id="drop-zone" role="button" tabindex="0">
+                                <i data-lucide="file-up"></i>
+                                <p>Click or drop a CSV file</p>
+                                <input type="file" id="csv-upload" accept=".csv" hidden>
+                            </div>
+                            <a class="btn-secondary full-width" href="/sample_csv">
+                                <i data-lucide="file-down"></i> Download Sample CSV
+                            </a>
+                            <div class="upload-status status-msg" hidden></div>
                         </div>
 
                         <div class="card glass tool-card">
                             <div class="tool-header">
                                 <i data-lucide="calculator"></i>
-                                <h3>Instant Profiler</h3>
+                                <h3>Customer Persona Predictor</h3>
                             </div>
-                            <p class="tool-desc">Test the behavioral engine with custom metrics.</p>
+                            <p class="tool-desc">Predict a customer's persona based on their RFM values.</p>
                             <form id="predictor-form" class="prism-form">
                                 <div class="form-group">
-                                    <label>Recency</label>
-                                    <input type="number" id="pred-recency" placeholder="Days since last purchase" required>
+                                    <label>Recency (days)</label>
+                                    <input type="number" id="pred-recency" placeholder="e.g., 30" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Frequency</label>
-                                    <input type="number" id="pred-frequency" placeholder="Number of orders" required>
+                                    <input type="number" id="pred-frequency" placeholder="e.g., 5" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Monetary</label>
-                                    <input type="number" id="pred-monetary" placeholder="Total spend (₹)" required>
+                                    <label>Monetary (₹)</label>
+                                    <input type="number" id="pred-monetary" placeholder="e.g., 15000" required>
                                 </div>
-                                <button type="submit" class="btn-primary full-width">Analyze</button>
+                                <button type="submit" class="btn-primary full-width">Predict Persona</button>
                             </form>
                             <div id="prediction-result" class="insight-card glass" style="margin-top: 1rem; display: none;">
                                 <h4 id="res-persona">-</h4>
                                 <p id="res-advice" style="font-size: 0.8rem; opacity: 0.8;"></p>
+                            </div>
+                        </div>
+
+                        <div class="card glass tool-card">
+                            <div class="tool-header">
+                                <i data-lucide="user-x"></i>
+                                <h3>Churn Risk Predictor</h3>
+                            </div>
+                            <p class="tool-desc">Estimate the probability of a customer churning based on their RFM data.</p>
+                            <form id="churn-predictor-form" class="prism-form">
+                                <div class="form-group">
+                                    <label>Recency (days)</label>
+                                    <input type="number" id="churn-recency" placeholder="e.g., 250" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Frequency</label>
+                                    <input type="number" id="churn-frequency" placeholder="e.g., 1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Monetary (₹)</label>
+                                    <input type="number" id="churn-monetary" placeholder="e.g., 100" required>
+                                </div>
+                                <button type="submit" class="btn-primary full-width">Predict Churn</button>
+                            </form>
+                            <div id="churn-prediction-result" class="insight-card glass" style="margin-top: 1rem; display: none;">
+                                <h4 id="churn-res-prediction">-</h4>
+                                <p id="churn-res-advice" style="font-size: 0.8rem; opacity: 0.8;"></p>
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,10 @@
+{
+    "last_trained_timestamp": "2026-05-11T10:06:55.297708",
+    "models_trained": [
+        "KMeans",
+        "LogisticRegression_Churn",
+        "BG/NBD_LTV",
+        "GammaGamma_LTV"
+    ],
+    "churn_model_accuracy": 0.9676
+}

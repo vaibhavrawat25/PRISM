@@ -35,7 +35,7 @@
 body {
     margin: 0;
     font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     overflow-x: hidden;
@@ -164,13 +164,26 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     margin-bottom: 2.5rem;
+}
+
+.actions,
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .top-bar h2 {
     font-size: 1.75rem;
     font-weight: 800;
     margin: 0;
+}
+
+.main-content > .top-bar {
+    padding: 2rem 3rem 0;
 }
 
 .btn-primary {
@@ -188,10 +201,44 @@ body {
     box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.3);
 }
 
+.btn-secondary {
+    background: var(--sidebar-bg);
+    color: var(--text-color);
+    padding: 0.75rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary svg,
+.btn-secondary svg,
+.nav-btn svg,
+.tool-header svg,
+.upload-area svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+}
+
 .btn-primary.large {
     padding: 1rem 2rem;
     font-size: 1rem;
     margin: 0 auto;
+}
+
+.full-width {
+    width: 100%;
+    justify-content: center;
 }
 
 /* Glassmorphism Cards */
@@ -212,6 +259,15 @@ body {
 }
 
 .kpi-card { padding: 1.5rem; }
+
+.card {
+    padding: 1.5rem;
+}
+
+.card h3,
+.tool-header h3 {
+    margin-top: 0;
+}
 
 .kpi-header {
     display: flex;
@@ -288,12 +344,34 @@ body {
 }
 
 .cluster-champions { border-top: 8px solid var(--c-champions); }
-.cluster-spenders { border-top: 8px solid var(--c-spenders); }
-.cluster-loafers { border-top: 8px solid var(--c-loafers); }
-.cluster-sleep { border-top: 8px solid var(--c-sleep); }
+.cluster-loyalists { border-top: 8px solid var(--c-spenders); }
+.cluster-at-risk { border-top: 8px solid var(--c-loafers); }
+.cluster-lost { border-top: 8px solid var(--c-sleep); }
 
 /* Tools Styling */
 .tool-card { padding: 2rem; }
+
+.csv-format {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+    padding: 0.9rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: var(--bg-color);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.csv-format strong {
+    color: var(--text-color);
+}
+
+.csv-format span {
+    font-family: 'JetBrains Mono', monospace;
+    overflow-wrap: anywhere;
+}
 
 .upload-area {
     border: 2px dashed var(--glass-border);
@@ -305,9 +383,14 @@ body {
     transition: 0.2s;
 }
 
-.upload-area:hover {
+.upload-area:hover,
+.upload-area.drag-over {
     border-color: #6366f1;
     background: var(--accent-glow);
+}
+
+.upload-area p {
+    margin-bottom: 0;
 }
 
 .prism-form {
@@ -326,11 +409,23 @@ body {
     font-size: 1rem;
 }
 
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
 .status-msg {
     margin-top: 1rem;
     padding: 1rem;
     border-radius: 8px;
     font-weight: 600;
+}
+
+.status-msg[hidden] {
+    display: none;
 }
 
 .status-success { background: rgba(16, 185, 129, 0.1); color: #059669; }
@@ -344,6 +439,83 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
+}
+
+.data-table-card {
+    margin-top: 1.5rem;
+}
+
+.table-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.table-toolbar h3 {
+    margin: 0;
+}
+
+.table-toolbar input {
+    width: min(320px, 100%);
+    background: var(--bg-color);
+    border: 1px solid var(--glass-border);
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 2rem 3rem 0;
+}
+
+.table-container {
+    margin: 2rem 3rem;
+    overflow-x: auto;
+}
+
+.prism-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.prism-table th,
+.prism-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--glass-border);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.prism-table th {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.persona-pill {
+    display: inline-flex;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: var(--accent-glow);
+    color: #4f46e5;
+    font-weight: 700;
+}
+
+.table-link {
+    color: #4f46e5;
+    font-weight: 700;
+    text-decoration: none;
 }
 
 /* Theme Switch */
@@ -385,3 +557,87 @@ body {
 }
 input:checked + .slider { background-color: #6366f1; }
 input:checked + .slider:before { transform: translateX(18px); }
+
+@media (max-width: 1100px) {
+    .kpi-grid,
+    .insight-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-2col,
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .prism-app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 1rem;
+        border-right: 0;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .brand,
+    .side-nav {
+        margin-bottom: 1rem;
+    }
+
+    .side-nav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .nav-btn {
+        white-space: nowrap;
+    }
+
+    #dashboard-container,
+    .hero-section,
+    .profile-grid {
+        padding: 1rem;
+    }
+
+    .main-content > .top-bar {
+        padding: 1rem 1rem 0;
+    }
+
+    .table-container {
+        margin: 1rem;
+    }
+
+    .top-bar,
+    .kpi-grid,
+    .insight-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .actions,
+    .hero-actions,
+    .table-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-content {
+        padding: 2rem 1rem;
+    }
+
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    .chart-box {
+        height: 380px;
+    }
+}
